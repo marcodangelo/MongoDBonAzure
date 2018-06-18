@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="MongoDBReplicaSet" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2012-05.1.7">
+  <WorkerRole name="MongoDB.WindowsAzure.MongoDBRole" vmsize="Medium">
+    <Startup>
+      <Task commandLine="InstanceMaintainer.cmd" executionContext="elevated" taskType="background" />
+    </Startup>
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InternalEndpoint name="MongodPort" protocol="tcp" port="27017" />
+    </Endpoints>
+    <ConfigurationSettings>
+      <Setting name="MongoDBDataDir" />
+      <Setting name="ReplicaSetName" />
+      <Setting name="MongoDBDataDirSizeMB" />
+      <Setting name="MongoDBLogVerbosity" />
+      <Setting name="RecycleOnExit" />
+    </ConfigurationSettings>
+    <LocalResources>
+      <LocalStorage name="MongoDBLocalDataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
+      <LocalStorage name="MongodLogDir" cleanOnRoleRecycle="false" sizeInMB="512" />
+      <LocalStorage name="BackupDriveCache" cleanOnRoleRecycle="true" sizeInMB="512" />
+    </LocalResources>
+  </WorkerRole>
+  <WebRole name="MongoDB.WindowsAzure.Manager" vmsize="Small">
+    <Startup>
+      <Task commandLine="InstanceMaintainer.cmd" executionContext="elevated" taskType="background" />
+    </Startup>
+    <Sites>
+      <Site name="Web">
+        <Bindings>
+          <Binding name="Endpoint1" endpointName="WebEndpoint" />
+        </Bindings>
+      </Site>
+    </Sites>
+    <Endpoints>
+      <InputEndpoint name="WebEndpoint" protocol="http" port="80" />
+    </Endpoints>
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <ConfigurationSettings>
+      <Setting name="ReplicaSetName" />
+      <Setting name="MongoDBDataDir" />
+    </ConfigurationSettings>
+    <LocalResources>
+      <LocalStorage name="BackupDriveCache" cleanOnRoleRecycle="true" sizeInMB="512" />
+    </LocalResources>
+  </WebRole>
+  <WebRole name="MongoDB.WindowsAzure.Sample.MvcMovie" vmsize="Small">
+    <Startup>
+      <Task commandLine="InstanceMaintainer.cmd" executionContext="elevated" taskType="background" />
+    </Startup>
+    <Sites>
+      <Site name="Web">
+        <Bindings>
+          <Binding name="Endpoint1" endpointName="SampleAppEndpoint" />
+        </Bindings>
+      </Site>
+    </Sites>
+    <Endpoints>
+      <InputEndpoint name="SampleAppEndpoint" protocol="http" port="8080" />
+    </Endpoints>
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <ConfigurationSettings>
+      <Setting name="ReplicaSetName" />
+    </ConfigurationSettings>
+  </WebRole>
+</ServiceDefinition>

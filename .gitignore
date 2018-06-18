@@ -1,0 +1,14 @@
+*.suo
+*.user
+obj
+bin
+ServiceDefinition.build.csdef
+ServiceConfiguration.Cloud.cscfg
+csx
+*.cer
+*.pfx
+downloadtemp
+MongoDBBinaries
+*.bak
+.azurePubxml
+packages
